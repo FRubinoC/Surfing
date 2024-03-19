@@ -1,0 +1,33 @@
+nodes_declaration
+{
+    1 : (var, bun)
+}
+
+functions_definition
+{
+    media(a, b)
+    { double(a) + triple(b) }
+
+    double(z)
+    { (z + 2) * 2 }
+
+    triple(f)
+    { (f + 1) * 3 }
+}
+
+nodes_definition
+{
+    1:[
+        P1 =
+        {
+            uh . prepare var . var := "ciao" . bun := 2 . release var . h
+        }
+
+        ||
+
+        P2 =
+        {
+            uh . wait var . var := "bye" . bun := 4 . used var . h
+        }
+    ]
+}

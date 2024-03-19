@@ -1,0 +1,355 @@
+nodes_declaration
+{
+    // Street light supervisor
+    1 : (car_presence)
+    |
+    // Car Access Point
+    2 : (car_presence)
+    |
+    // Car Sensor Node
+    3 : (idcar, car_value, car_presence, S1, A1)
+    |
+    // Lamp Node 1
+    4 : (car_presence, ped_presence, battery life, S1, A1)
+    |
+    // Lamp Node 2
+    5 : (car_presence, ped_presence, battery life, S1, A1)
+    |
+    // Lamp Node 3
+    6 : (car_presence, ped_presence, battery life, S1, A1)
+    |
+    // Lamp Node 4
+    7 : (car_presence, ped_presence, battery life, S1, A1)
+    |
+    // Lamp Node 5
+    8 : (car_presence, ped_presence, battery life, S1, A1)
+    |
+    // Lamp Node 6
+    9 : (car_presence, ped_presence, battery life, S1, A1)
+    |
+    // Log Node
+    10 : (log)
+}
+
+functions_definition
+{
+    0
+}
+
+nodes_definition
+{
+    // Street light supervisor
+    1:[
+        // Process waiting for car presence by car access point
+        P1 =
+        {
+            uh . 
+                (2; car; car_presence) .
+                (car_presence == true) ?
+                    <<"car_light", "on">>-> 4,5,6,7,8,9,10 .
+                    num_sec := 5 .
+                    h
+                    :
+                    (num_sec > 0) ?
+                        <<"car_light", "on">>-> 4,5,6,7,8,9,10 .
+                        num_sec := num_sec -1 .
+                        h
+                        :
+                        <<"car_light", "off">>-> 4,5,6,7,8,9,10 .
+                        h
+        }
+
+        ||
+
+        // Process waiting for presence of pedestrians on lamp1
+        P2 =
+        {
+            uh .
+                ()
+        }
+
+        ||
+
+        // Process waiting for presence of pedestrians on lamp1
+        P2 =
+        {
+
+        }
+
+        ||
+
+        // Process waiting for presence of pedestrians on lamp1
+        P2 =
+        {
+
+        }
+
+        ||
+
+        // Process waiting for presence of pedestrians on lamp1
+        P2 =
+        {
+
+        }
+
+        ||
+
+        // Process waiting for presence of pedestrians on lamp1
+        P2 =
+        {
+
+        }
+
+        ||
+
+        // Process waiting for presence of pedestrians on lamp1
+        P2 =
+        {
+
+        }
+    ]
+
+    |
+
+    // Car Acces Point
+    2:[
+        P1 =
+        {
+            uh .
+                (3; car; car_presence) .
+                <<"car", car_presence>>-> 1 .
+            h
+        }
+    ]
+
+    |
+
+    // Car Sensor Node
+    3:[
+        P1 =
+        {
+            uh . 
+                idcar := "car" . car_value := S1 .
+                (car_value >= 195) ?
+                    car_presence := true .
+                    <<idcar, car_presence>>->2 . 
+                    h
+                    :
+                    car_presence := false .
+                    <<idcar, car_presence>>->2 . 
+                    h
+        }
+
+        ||
+
+        // Sensor for the presence of cars
+        S1 =
+        {
+            uh . S1 := (0, 200) . h
+        }
+    ]
+
+    |
+
+    // Lamp Node 1
+    4:[
+        P1 =
+        {
+
+        }
+
+        ||
+
+        //Sensor for the presence of pedestrians
+        S1 =
+        {
+            uh . S1 := (0, 200) . h
+        }
+
+        ||
+
+        //Sensor of the light
+        S2 =
+        {
+            uh . S2 := (100, 100) . h
+        }
+
+        ||
+
+        //Sensor of the battery
+        S2 =
+        {
+            uh . S3 := (100, 100) . h
+        }
+    ]
+
+    ||
+
+    // Lamp Node 2
+    5:[
+        P1 =
+        {
+
+        }
+
+        ||
+
+        //Sensor for the presence of pedestrians
+        S1 =
+        {
+            uh . S1 := (0, 200) . h
+        }
+
+        ||
+
+        //Sensor of the light
+        S2 =
+        {
+            uh . S2 := (100, 100) . h
+        }
+
+        ||
+
+        //Sensor of the battery
+        S2 =
+        {
+            uh . S3 := (100, 100) . h
+        }
+    ]
+
+    ||
+
+    // Lamp Node 3
+    6:[
+        P1 =
+        {
+
+        }
+
+        ||
+
+        //Sensor for the presence of pedestrians
+        S1 =
+        {
+            uh . S1 := (0, 200) . h
+        }
+
+        ||
+
+        //Sensor of the light
+        S2 =
+        {
+            uh . S2 := (100, 100) . h
+        }
+
+        ||
+
+        //Sensor of the battery
+        S2 =
+        {
+            uh . S3 := (100, 100) . h
+        }
+    ]
+
+    ||
+
+    // Lamp Node 4
+    7:[
+        P1 =
+        {
+
+        }
+
+        ||
+
+        //Sensor for the presence of pedestrians
+        S1 =
+        {
+            uh . S1 := (0, 200) . h
+        }
+
+        ||
+
+        //Sensor of the light
+        S2 =
+        {
+            uh . S2 := (100, 100) . h
+        }
+
+        ||
+
+        //Sensor of the battery
+        S2 =
+        {
+            uh . S3 := (100, 100) . h
+        }
+    ]
+
+    ||
+
+    // Lamp Node 5
+    8:[
+        P1 =
+        {
+
+        }
+
+        ||
+
+        //Sensor for the presence of pedestrians
+        S1 =
+        {
+            uh . S1 := (0, 200) . h
+        }
+
+        ||
+
+        //Sensor of the light
+        S2 =
+        {
+            uh . S2 := (100, 100) . h
+        }
+
+        ||
+
+        //Sensor of the battery
+        S2 =
+        {
+            uh . S3 := (100, 100) . h
+        }
+    ]
+
+    ||
+
+    // Lamp Node 6
+    9:[
+        P1 =
+        {
+
+        }
+
+        ||
+
+        //Sensor for the presence of pedestrians
+        S1 =
+        {
+            uh . S1 := (0, 200) . h
+        }
+
+        ||
+
+        //Sensor of the light
+        S2 =
+        {
+            uh . S2 := (100, 100) . h
+        }
+
+        ||
+
+        //Sensor of the battery
+        S2 =
+        {
+            uh . S3 := (100, 100) . h
+        }
+    ]
+}

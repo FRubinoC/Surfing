@@ -1,0 +1,85 @@
+nodes_declaration
+{
+    1 : (var, S1, S2, A1, ciao, bun)
+    |
+    2 : (bin, ba, ok, bye, ciao, var, sin)
+    |
+    3 : (bin, ba, ok, bye, ciao, var, sin, S1, A1)
+}
+
+functions_definition
+{
+    media(a, b)
+    { double(a) + triple(b) }
+
+    double(z)
+    { (z + 2) * 2 }
+
+    triple(f)
+    { (f + 1) * 3 }
+}
+
+nodes_definition
+{
+    //Control node 1
+    1:[
+        A1 =
+        {
+            uh . (| turnon, turnoff |) . h
+        }
+
+        ||
+
+        P1 = 
+        {
+            uh . true ? 
+                ciao := 2 . var := 2 . bun := media(ciao, var) . h 
+                :
+                <A1, turnon> . h
+        }
+
+        ||
+
+        P2 = 
+        {
+            NULL
+        }      
+    ]
+
+    |
+
+    //Control Node 2
+    2:[
+        P2 = 
+        {
+            uh .  (2; ciao, san; bin). (bin == "ciao") ?
+                                                bin:="san".h
+                                                :
+                                                bin:="ciao".h  
+        }
+
+        ||
+
+        P1 = 
+        {
+            uh. ciao:="ciao". var:="san". sin:="ban". <<ciao, var, sin>>-> 2,3 . h
+        }        
+    ]
+
+    |
+
+    //Sensor node
+    3:[
+        S1 = 
+        {
+            uh . tau . S1 := (10, 20) . h
+        }
+
+        ||
+
+        A1 = 
+        {
+            NULL
+        }
+    ]
+}

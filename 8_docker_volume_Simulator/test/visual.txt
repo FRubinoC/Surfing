@@ -1,0 +1,46 @@
+nodes_declaration
+{
+    // Dichiarazione nodi: sensori, variabili e attuatori
+
+    1 : (var1, var2, S1, S2, A1, A2)
+    |
+    2 : (bin, var1, var2, var3, S1 ,A1)
+}
+
+functions_definition
+{
+    media(a, b)
+    { (a + b)/2 }
+}
+
+nodes_definition
+{
+    1:[
+        P1 =
+        {
+            uh . 
+                var1 := 2 . <<"ciao", var1>>-> 2 . 
+            h
+        }
+    ]
+
+    |
+
+    //Control Node 2
+    2:[
+        P1 = 
+        {
+            uh .  
+            (1; ciao; bin). 
+            (bin == 2) ?
+                bin:="san".h
+                :
+                bin:="ciao".h                                   
+        }     
+    ]
+}
+
+
+
+
+

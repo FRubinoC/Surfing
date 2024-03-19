@@ -1,0 +1,22 @@
+nodes_declaration
+{
+    // Dichiarazione nodi: sensori, variabili e attuatori
+}
+
+functions_definition
+{
+    // Definizione funzioni
+}
+
+nodes_definition
+{
+    // Definizione nodi
+
+    var1 := 2 . P
+}
+
+
+
+(1; ciao; bin) . P
+
+ <<"ciao", var1>>-> 2,3,4 . P

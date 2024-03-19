@@ -1,0 +1,1177 @@
+nodes_declaration
+{
+    // Street light supervisor
+    1 : (car_presence, ped_action1, ped_action2, ped_action3, ped_action4,
+         ped_action5, ped_action6, ped_presence1, ped_presence2, ped_presence3,
+         ped_presence4, ped_presence5, ped_presence6, num_sec)
+    |
+    // Car Access Point
+    2 : (car_presence)
+    |
+    // Car Sensor Node
+    3 : (idcar, car_value, car_presence, S1)
+    |
+    // Lamp Node 1
+    4 : (car_presence, car_counter, car_value, ped_presence, 
+         near_ped, ped_counter, battery_life, S1, S2, A1, A2)
+    |
+    // Lamp Node 2
+    5 : (car_presence, car_counter, car_value, ped_presence,
+         near_ped, ped_counter, battery_life, S1, S2, A1, A2)
+    |
+    // Lamp Node 3
+    6 : (car_presence, car_counter, car_value, ped_presence,
+         near_ped, ped_counter, battery_life, S1, S2, A1, A2)
+    |
+    // Lamp Node 4
+    7 : (car_presence, car_counter, car_value, ped_presence,
+         near_ped, ped_counter, battery_life, S1, S2, A1, A2)
+    |
+    // Lamp Node 5
+    8 : (car_presence, car_counter, car_value, ped_presence,
+         near_ped, ped_counter, battery_life, S1, S2, A1, A2)
+    |
+    // Lamp Node 6
+    9 : (car_presence, car_counter, car_value, ped_presence,
+         near_ped, ped_counter, battery_life, S1, S2, A1, A2)
+    |
+    // Log Node
+    10 : (car_presence)
+}
+
+functions_definition
+{
+    NULL
+}
+
+nodes_definition
+{
+    // Street light supervisor
+    1:[
+        // Process waiting for car presence by car access point
+        P1 =
+        {
+            uh . 
+                // Input presence of car by AP
+                (2; car; car_presence) .
+                // Processing based on the presence of a car
+                (car_presence == true) ?
+                {{
+                    <<car_light; "on">>-> 4,5,6,7,8,9,10 .
+                    num_sec := 6 .
+                    h
+                    :
+                    (num_sec > 0) ?
+                    {{
+                        <<car_light; "on">>-> 4,5,6,7,8,9,10 .
+                        num_sec := num_sec - 1 .
+                        h
+                        :
+                        <<car_light; "off">>-> 4,5,6,7,8,9,10 .
+                        h
+                    }} .
+                    h
+                }} .
+            h             
+        }
+
+        ||
+
+        // Process waiting for presence of pedestrians on lamp1
+        P2 =
+        {
+            uh .
+                //Take information about presence of pedestrian in lamp1
+                prepare ped_presence1 .
+                (4; ped_appears; ped_presence1) .
+                release ped_presence1 .
+            h
+        }
+
+        ||
+
+        // Process waiting for presence of pedestrians on lamp2
+        P3 =
+        {
+            uh .
+                //Take information about presence of pedestrian in lamp2
+                prepare ped_presence2 .
+                (5; ped_appears; ped_presence2) .
+                release ped_presence2 .
+            h
+        }
+
+        ||
+
+        // Process waiting for presence of pedestrians on lamp3
+        P4 =
+        {
+            uh .
+                //Take information about presence of pedestrian in lamp3
+                prepare ped_presence3 .
+                (6; ped_appears; ped_presence3) .
+                release ped_presence3 .
+            h
+        }
+
+        ||
+
+        // Process waiting for presence of pedestrians on lamp4
+        P5 =
+        {
+            uh .
+                //Take information about presence of pedestrian in lamp4
+                prepare ped_presence4 .
+                (7; ped_appears; ped_presence4) .
+                release ped_presence4 .
+            h
+        }
+
+        ||
+
+        // Process waiting for presence of pedestrians on lamp5
+        P6 =
+        {
+            uh .
+                //Take information about presence of pedestrian in lamp5
+                prepare ped_presence5 .
+                (8; ped_appears; ped_presence5) .
+                release ped_presence5 .
+            h
+        }
+
+        ||
+
+        // Process waiting for presence of pedestrians on lamp6
+        P7 =
+        {
+            uh .
+                //Take information about presence of pedestrian in lamp6
+                prepare ped_presence6 .
+                (9; ped_appears; ped_presence6) .
+                release ped_presence6 .
+            h
+        }
+
+        ||
+
+        // Process for the management of the lamp for the pedestrians
+        P8 =
+        {
+            uh .
+                //Take the information obtained by the other processes
+                wait ped_presence1 .
+                wait ped_presence2 .
+                wait ped_presence3 .
+                wait ped_presence4 .
+                wait ped_presence5 .
+                wait ped_presence6 .
+
+                ped_action1 := false .
+                ped_action2 := false .
+                ped_action3 := false .
+                ped_action4 := false .
+                ped_action5 := false .
+                ped_action6 := false .
+
+                (ped_presence1 == "yes") ?
+                {{
+                    ped_action2 := true . h
+                    :
+                    h
+                }} .
+                (ped_presence2 == "yes") ?
+                {{
+                    ped_action1 := true .
+                    ped_action3 := true . h
+                    :
+                    h
+                }} .
+                (ped_presence3 == "yes") ?
+                {{
+                    ped_action2 := true .
+                    ped_action4 := true . h
+                    :
+                    h
+                }} .
+                (ped_presence4 == "yes") ?
+                {{
+                    ped_action3 := true .
+                    ped_action5 := true . h
+                    :
+                    h
+                }} .
+                (ped_presence5 == "yes") ?
+                {{
+                    ped_action4 := true .
+                    ped_action6 := true . h
+                    :
+                    h
+                }} .
+                (ped_presence6 == "yes") ?
+                {{
+                    ped_action5 := true . h
+                    :
+                    h
+                }} .
+                used ped_presence6 .
+                used ped_presence5 .
+                used ped_presence4 .
+                used ped_presence3 .
+                used ped_presence2 .
+                used ped_presence1 .
+                
+                <<ped_neigh; ped_action1>>-> 4 .
+                <<ped_neigh; ped_action2>>-> 5 .
+                <<ped_neigh; ped_action3>>-> 6 .
+                <<ped_neigh; ped_action4>>-> 7 .
+                <<ped_neigh; ped_action5>>-> 8 .
+                <<ped_neigh; ped_action6>>-> 9 .
+            h
+        }
+    ]
+
+    |
+
+    // Car Acces Point
+    2:[
+        P1 =
+        {
+            uh .
+                (3; car; car_presence) .
+                <<car; car_presence>>-> 1 .
+            h
+        }
+    ]
+
+    |
+
+    // Car Sensor Node
+    3:[
+        P1 =
+        {
+            uh . 
+                car_value := S1 .
+                (car_value >= 195) ?
+                {{
+                    car_presence := true .
+                    <<car; car_presence>>->2 . 
+                    h
+                    :
+                    car_presence := false .
+                    <<car; car_presence>>->2 . 
+                    h
+                }} .
+                h
+        }
+
+        ||
+
+        // Sensor for the presence of cars
+        S1 =
+        {
+            uh . S1 := (0, 200) . h
+        }
+    ]
+
+    |
+
+    // Lamp Node 1
+    4:[
+        // Process waiting for car presence
+        P1 =
+        {
+            uh.
+                (1; car_light; car_value) .
+                (car_value == "on") ?
+                {{
+                    (car_counter == 0) ?
+                    {{
+                        <A1, turnon> .
+                        h
+                        :
+                        h
+                    }} .
+                    car_counter := 6 .
+                    h
+                    :
+                    h
+                }} .
+                (car_counter > 0) ?
+                {{
+                    (car_counter == 1) ?
+                    {{
+                        //A1 is the actuator of the car lamp
+                        <A1, turnoff> .
+                        h
+                        :
+                        h
+                    }} .
+                    car_counter := car_counter - 1 .
+                    h
+                    :
+                    h
+                }} .
+            h
+        }
+
+        ||
+
+        // Process waiting for pedestrian presence
+        P2 =
+        {
+            uh .
+                // The first thing to do is to manage the values received by the sensor and send it
+                // to the supervisor. This is important otherwise the supervisor doesn't know what
+                // to do.
+                ped_presence := S1 .
+                (ped_presence >= 195) ?
+                {{
+                    <<ped_appears; "yes">>-> 1 .
+                    (ped_counter == 0) ?
+                    {{
+                        <A2, turnon> .
+                        h
+                        :
+                        h
+                    }} .
+                    ped_counter := 6 .
+                    h
+                    :
+                    <<ped_appears; "no">>-> 1 .
+                    h
+                }} .
+                // Now we can manage the presence of pedestrians on the near lamps
+                wait near_ped .
+                (near_ped == true) ?
+                {{
+                    (ped_counter == 0) ?
+                    {{
+                        // A2 is the actuator of the pedestrian lamp
+                        <A2, turnon> .
+                        ped_counter := 6 .
+                        h
+                        :
+                        ped_counter := 6 .
+                        h
+                    }} .
+                    h
+                    :
+                    h
+                }} .
+                used near_ped .
+                (ped_counter > 0) ?
+                {{
+                    (ped_counter == 1) ?
+                    {{
+                        <A2, turnoff> .
+                        ped_counter := ped_counter - 1 .
+                        h
+                        :
+                        ped_counter := ped_counter - 1 .
+                        h
+                    }} .
+                    h
+                    :
+                    h
+                }} .
+                h
+        }
+
+        ||
+
+        // Process listening for pedestrians on near lamps
+        P3 =
+        {
+            prepare near_ped .
+            (1; ped_neigh; near_ped) .
+            release near_ped .
+            h
+        }
+
+        ||
+
+        //Sensor for the presence of pedestrians
+        S1 =
+        {
+            uh . S1 := (0, 200) . h
+        }
+
+        ||
+
+        //Sensor of the light
+        S2 =
+        {
+            uh . S2 := (10, 100) . h
+        }
+
+        ||
+
+        // Actuator for the car lamp
+        A1 =
+        {
+            uh . (| turnon, turnoff |) . h
+        }
+
+        ||
+
+        // Actuator for the pedestrian lamp
+        A2 =
+        {
+            uh . (| turnon, turnoff |) . h
+        }
+    ]
+
+    |
+
+    // Lamp Node 2
+    5:[
+        // Process waiting for car presence
+        P1 =
+        {
+            uh.
+                (1; car_light; car_value) .
+                (car_value == "on") ?
+                {{
+                    (car_counter == 0) ?
+                    {{
+                        <A1, turnon> .
+                        h
+                        :
+                        h
+                    }} .
+                    car_counter := 6 .
+                    h
+                    :
+                    h
+                }} .
+                (car_counter > 0) ?
+                {{
+                    (car_counter == 1) ?
+                    {{
+                        //A1 is the actuator of the car lamp
+                        <A1, turnoff> .
+                        h
+                        :
+                        h
+                    }} .
+                    car_counter := car_counter - 1 .
+                    h
+                    :
+                    h
+                }} .
+            h
+        }
+
+        ||
+
+        // Process waiting for pedestrian presence
+        P2 =
+        {
+            uh .
+                // The first thing to do is to manage the values received by the sensor and send it
+                // to the supervisor. This is important otherwise the supervisor doesn't know what
+                // to do.
+                ped_presence := S1 .
+                (ped_presence >= 195) ?
+                {{
+                    <<ped_appears; "yes">>-> 1 .
+                    (ped_counter == 0) ?
+                    {{
+                        <A2, turnon> .
+                        h
+                        :
+                        h
+                    }} .
+                    ped_counter := 6 .
+                    h
+                    :
+                    <<ped_appears; "no">>-> 1 .
+                    h
+                }} .
+                // Now we can manage the presence of pedestrians on the near lamps
+                wait near_ped .
+                (near_ped == true) ?
+                {{
+                    (ped_counter == 0) ?
+                    {{
+                        // A2 is the actuator of the pedestrian lamp
+                        <A2, turnon> .
+                        ped_counter := 6 .
+                        h
+                        :
+                        ped_counter := 6 .
+                        h
+                    }} .
+                    h
+                    :
+                    h
+                }} .
+                used near_ped .
+                (ped_counter > 0) ?
+                {{
+                    (ped_counter == 1) ?
+                    {{
+                        <A2, turnoff> .
+                        ped_counter := ped_counter - 1 .
+                        h
+                        :
+                        ped_counter := ped_counter - 1 .
+                        h
+                    }} .
+                    h
+                    :
+                    h
+                }} .
+                h
+        }
+
+        ||
+
+        // Process listening for pedestrians on near lamps
+        P3 =
+        {
+            prepare near_ped .
+            (1; ped_neigh; near_ped) .
+            release near_ped .
+            h
+        }
+
+        ||
+
+        //Sensor for the presence of pedestrians
+        S1 =
+        {
+            uh . S1 := (0, 200) . h
+        }
+
+        ||
+
+        //Sensor of the light
+        S2 =
+        {
+            uh . S2 := (10, 100) . h
+        }
+
+        ||
+
+        // Actuator for the car lamp
+        A1 =
+        {
+            uh . (| turnon, turnoff |) . h
+        }
+
+        ||
+
+        // Actuator for the pedestrian lamp
+        A2 =
+        {
+            uh . (| turnon, turnoff |) . h
+        }
+    ]
+
+    |
+
+    // Lamp Node 3
+    6:[
+        // Process waiting for car presence
+        P1 =
+        {
+            uh.
+                (1; car_light; car_value) .
+                (car_value == "on") ?
+                {{
+                    (car_counter == 0) ?
+                    {{
+                        <A1, turnon> .
+                        h
+                        :
+                        h
+                    }} .
+                    car_counter := 6 .
+                    h
+                    :
+                    h
+                }} .
+                (car_counter > 0) ?
+                {{
+                    (car_counter == 1) ?
+                    {{
+                        //A1 is the actuator of the car lamp
+                        <A1, turnoff> .
+                        h
+                        :
+                        h
+                    }} .
+                    car_counter := car_counter - 1 .
+                    h
+                    :
+                    h
+                }} .
+            h
+        }
+
+        ||
+
+        // Process waiting for pedestrian presence
+        P2 =
+        {
+            uh .
+                // The first thing to do is to manage the values received by the sensor and send it
+                // to the supervisor. This is important otherwise the supervisor doesn't know what
+                // to do.
+                ped_presence := S1 .
+                (ped_presence >= 195) ?
+                {{
+                    <<ped_appears; "yes">>-> 1 .
+                    (ped_counter == 0) ?
+                    {{
+                        <A2, turnon> .
+                        h
+                        :
+                        h
+                    }} .
+                    ped_counter := 6 .
+                    h
+                    :
+                    <<ped_appears; "no">>-> 1 .
+                    h
+                }} .
+                // Now we can manage the presence of pedestrians on the near lamps
+                wait near_ped .
+                (near_ped == true) ?
+                {{
+                    (ped_counter == 0) ?
+                    {{
+                        // A2 is the actuator of the pedestrian lamp
+                        <A2, turnon> .
+                        ped_counter := 6 .
+                        h
+                        :
+                        ped_counter := 6 .
+                        h
+                    }} .
+                    h
+                    :
+                    h
+                }} .
+                used near_ped .
+                (ped_counter > 0) ?
+                {{
+                    (ped_counter == 1) ?
+                    {{
+                        <A2, turnoff> .
+                        ped_counter := ped_counter - 1 .
+                        h
+                        :
+                        ped_counter := ped_counter - 1 .
+                        h
+                    }} .
+                    h
+                    :
+                    h
+                }} .
+                h
+        }
+
+        ||
+
+        // Process listening for pedestrians on near lamps
+        P3 =
+        {
+            prepare near_ped .
+            (1; ped_neigh; near_ped) .
+            release near_ped .
+            h
+        }
+
+        ||
+
+        //Sensor for the presence of pedestrians
+        S1 =
+        {
+            uh . S1 := (0, 200) . h
+        }
+
+        ||
+
+        //Sensor of the light
+        S2 =
+        {
+            uh . S2 := (10, 100) . h
+        }
+
+        ||
+
+        // Actuator for the car lamp
+        A1 =
+        {
+            uh . (| turnon, turnoff |) . h
+        }
+
+        ||
+
+        // Actuator for the pedestrian lamp
+        A2 =
+        {
+            uh . (| turnon, turnoff |) . h
+        }
+    ]
+
+    |
+
+    // Lamp Node 4
+    7:[
+        // Process waiting for car presence
+        P1 =
+        {
+            uh.
+                (1; car_light; car_value) .
+                (car_value == "on") ?
+                {{
+                    (car_counter == 0) ?
+                    {{
+                        <A1, turnon> .
+                        h
+                        :
+                        h
+                    }} .
+                    car_counter := 6 .
+                    h
+                    :
+                    h
+                }} .
+                (car_counter > 0) ?
+                {{
+                    (car_counter == 1) ?
+                    {{
+                        //A1 is the actuator of the car lamp
+                        <A1, turnoff> .
+                        h
+                        :
+                        h
+                    }} .
+                    car_counter := car_counter - 1 .
+                    h
+                    :
+                    h
+                }} .
+            h
+        }
+
+        ||
+
+        // Process waiting for pedestrian presence
+        P2 =
+        {
+            uh .
+                // The first thing to do is to manage the values received by the sensor and send it
+                // to the supervisor. This is important otherwise the supervisor doesn't know what
+                // to do.
+                ped_presence := S1 .
+                (ped_presence >= 195) ?
+                {{
+                    <<ped_appears; "yes">>-> 1 .
+                    (ped_counter == 0) ?
+                    {{
+                        <A2, turnon> .
+                        h
+                        :
+                        h
+                    }} .
+                    ped_counter := 6 .
+                    h
+                    :
+                    <<ped_appears; "no">>-> 1 .
+                    h
+                }} .
+                // Now we can manage the presence of pedestrians on the near lamps
+                wait near_ped .
+                (near_ped == true) ?
+                {{
+                    (ped_counter == 0) ?
+                    {{
+                        // A2 is the actuator of the pedestrian lamp
+                        <A2, turnon> .
+                        ped_counter := 6 .
+                        h
+                        :
+                        ped_counter := 6 .
+                        h
+                    }} .
+                    h
+                    :
+                    h
+                }} .
+                used near_ped .
+                (ped_counter > 0) ?
+                {{
+                    (ped_counter == 1) ?
+                    {{
+                        <A2, turnoff> .
+                        ped_counter := ped_counter - 1 .
+                        h
+                        :
+                        ped_counter := ped_counter - 1 .
+                        h
+                    }} .
+                    h
+                    :
+                    h
+                }} .
+                h
+        }
+
+        ||
+
+        // Process listening for pedestrians on near lamps
+        P3 =
+        {
+            prepare near_ped .
+            (1; ped_neigh; near_ped) .
+            release near_ped .
+            h
+        }
+
+        ||
+
+        //Sensor for the presence of pedestrians
+        S1 =
+        {
+            uh . S1 := (0, 200) . h
+        }
+
+        ||
+
+        //Sensor of the light
+        S2 =
+        {
+            uh . S2 := (10, 100) . h
+        }
+
+        ||
+
+        // Actuator for the car lamp
+        A1 =
+        {
+            uh . (| turnon, turnoff |) . h
+        }
+
+        ||
+
+        // Actuator for the pedestrian lamp
+        A2 =
+        {
+            uh . (| turnon, turnoff |) . h
+        }
+    ]
+
+    |
+
+    // Lamp Node 5
+    8:[
+        // Process waiting for car presence
+        P1 =
+        {
+            uh.
+                (1; car_light; car_value) .
+                (car_value == "on") ?
+                {{
+                    (car_counter == 0) ?
+                    {{
+                        <A1, turnon> .
+                        h
+                        :
+                        h
+                    }} .
+                    car_counter := 6 .
+                    h
+                    :
+                    h
+                }} .
+                (car_counter > 0) ?
+                {{
+                    (car_counter == 1) ?
+                    {{
+                        //A1 is the actuator of the car lamp
+                        <A1, turnoff> .
+                        h
+                        :
+                        h
+                    }} .
+                    car_counter := car_counter - 1 .
+                    h
+                    :
+                    h
+                }} .
+            h
+        }
+
+        ||
+
+        // Process waiting for pedestrian presence
+        P2 =
+        {
+            uh .
+                // The first thing to do is to manage the values received by the sensor and send it
+                // to the supervisor. This is important otherwise the supervisor doesn't know what
+                // to do.
+                ped_presence := S1 .
+                (ped_presence >= 195) ?
+                {{
+                    <<ped_appears; "yes">>-> 1 .
+                    (ped_counter == 0) ?
+                    {{
+                        <A2, turnon> .
+                        h
+                        :
+                        h
+                    }} .
+                    ped_counter := 6 .
+                    h
+                    :
+                    <<ped_appears; "no">>-> 1 .
+                    h
+                }} .
+                // Now we can manage the presence of pedestrians on the near lamps
+                wait near_ped .
+                (near_ped == true) ?
+                {{
+                    (ped_counter == 0) ?
+                    {{
+                        // A2 is the actuator of the pedestrian lamp
+                        <A2, turnon> .
+                        ped_counter := 6 .
+                        h
+                        :
+                        ped_counter := 6 .
+                        h
+                    }} .
+                    h
+                    :
+                    h
+                }} .
+                used near_ped .
+                (ped_counter > 0) ?
+                {{
+                    (ped_counter == 1) ?
+                    {{
+                        <A2, turnoff> .
+                        ped_counter := ped_counter - 1 .
+                        h
+                        :
+                        ped_counter := ped_counter - 1 .
+                        h
+                    }} .
+                    h
+                    :
+                    h
+                }} .
+                h
+        }
+
+        ||
+
+        // Process listening for pedestrians on near lamps
+        P3 =
+        {
+            prepare near_ped .
+            (1; ped_neigh; near_ped) .
+            release near_ped .
+            h
+        }
+
+        ||
+
+        //Sensor for the presence of pedestrians
+        S1 =
+        {
+            uh . S1 := (0, 200) . h
+        }
+
+        ||
+
+        //Sensor of the light
+        S2 =
+        {
+            uh . S2 := (10, 100) . h
+        }
+
+        ||
+
+        // Actuator for the car lamp
+        A1 =
+        {
+            uh . (| turnon, turnoff |) . h
+        }
+
+        ||
+
+        // Actuator for the pedestrian lamp
+        A2 =
+        {
+            uh . (| turnon, turnoff |) . h
+        }
+    ]
+
+    |
+
+    // Lamp Node 6
+    9:[
+        // Process waiting for car presence
+        P1 =
+        {
+            uh.
+                (1; car_light; car_value) .
+                (car_value == "on") ?
+                {{
+                    (car_counter == 0) ?
+                    {{
+                        <A1, turnon> .
+                        h
+                        :
+                        h
+                    }} .
+                    car_counter := 6 .
+                    h
+                    :
+                    h
+                }} .
+                (car_counter > 0) ?
+                {{
+                    (car_counter == 1) ?
+                    {{
+                        //A1 is the actuator of the car lamp
+                        <A1, turnoff> .
+                        h
+                        :
+                        h
+                    }} .
+                    car_counter := car_counter - 1 .
+                    h
+                    :
+                    h
+                }} .
+            h
+        }
+
+        ||
+
+        // Process waiting for pedestrian presence
+        P2 =
+        {
+            uh .
+                // The first thing to do is to manage the values received by the sensor and send it
+                // to the supervisor. This is important otherwise the supervisor doesn't know what
+                // to do.
+                ped_presence := S1 .
+                (ped_presence >= 195) ?
+                {{
+                    <<ped_appears; "yes">>-> 1 .
+                    (ped_counter == 0) ?
+                    {{
+                        <A2, turnon> .
+                        h
+                        :
+                        h
+                    }} .
+                    ped_counter := 6 .
+                    h
+                    :
+                    <<ped_appears; "no">>-> 1 .
+                    h
+                }} .
+                // Now we can manage the presence of pedestrians on the near lamps
+                wait near_ped .
+                (near_ped == true) ?
+                {{
+                    (ped_counter == 0) ?
+                    {{
+                        // A2 is the actuator of the pedestrian lamp
+                        <A2, turnon> .
+                        ped_counter := 6 .
+                        h
+                        :
+                        ped_counter := 6 .
+                        h
+                    }} .
+                    h
+                    :
+                    h
+                }} .
+                used near_ped .
+                (ped_counter > 0) ?
+                {{
+                    (ped_counter == 1) ?
+                    {{
+                        <A2, turnoff> .
+                        ped_counter := ped_counter - 1 .
+                        h
+                        :
+                        ped_counter := ped_counter - 1 .
+                        h
+                    }} .
+                    h
+                    :
+                    h
+                }} .
+                h
+        }
+
+        ||
+
+        // Process listening for pedestrians on near lamps
+        P3 =
+        {
+            prepare near_ped .
+            (1; ped_neigh; near_ped) .
+            release near_ped .
+            h
+        }
+
+        ||
+
+        //Sensor for the presence of pedestrians
+        S1 =
+        {
+            uh . S1 := (0, 200) . h
+        }
+
+        ||
+
+        //Sensor of the light
+        S2 =
+        {
+            uh . S2 := (10, 100) . h
+        }
+
+        ||
+
+        // Actuator for the car lamp
+        A1 =
+        {
+            uh . (| turnon, turnoff |) . h
+        }
+
+        ||
+
+        // Actuator for the pedestrian lamp
+        A2 =
+        {
+            uh . (| turnon, turnoff |) . h
+        }
+    ]
+
+    |
+
+    10:[
+
+        //Process listening for supervisor communications
+        P1 =
+        {
+            uh .
+            (1; car_light; car_presence) .
+            h
+        }
+    ]
+}
