@@ -14,7 +14,7 @@ let ident = non_digit (digit | non_digit)*
 let line_comment = "//" [^ '\n']*
 
 let acceptable_char = ['('] | [')'] | ['|'] | [':'] | ['='] | ['<'] | ['>'] | ['['] | [']']
-						| ['{'] | ['}'] | ['-'] | ['?']
+						| ['{'] | ['}'] | ['-'] | ['?'] | ['&']
 let operator = (acceptable_char)*
 
 let word = ['"'] (non_digit | ' ')* ['"']
@@ -63,6 +63,7 @@ rule token = parse
 			match str with
 			| "(|"   -> OPENACTINPUT
 			| "|)"   -> CLOSEACTINPUT
+			| "&&" 	 -> AND
 			| ":="   -> ASSIGNMENT
 			| ":["   -> OPENNODE
 			| "]"    -> ENDNODE
