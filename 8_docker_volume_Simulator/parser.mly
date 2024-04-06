@@ -4,7 +4,7 @@
 
 %token OPENNODE ENDNODE							/* ":[", "]" */
 %token LROUND RROUND
-%token DOT SEMICOLON COMMA QUESTION COLON		/* ".", ";", ",", "?", ":" */
+%token DOT SEMICOLON COMMA QUESTION COLON AND		/* ".", ";", ",", "?", ":" "&&" */
 %token OPENITER CLOSEITER						/* "µh", "h" */
 %token OPENCONDBODY CLOSECONDBODY
 %token LPAREN RPAREN
@@ -99,6 +99,10 @@ component:
 condition:
 	  BOOL
 	  	{ Bool($1) }
+	| condition AND condition
+		{ And($1, $3) }
+	| condition PCOMPONENT condition
+		{ Or($1, $3) }
 	| term CLOSEACTOUTPUT term
 		{ Greater($1, $3)}
 	| term OPENACTOUTPUT term
